@@ -3,14 +3,20 @@ import cors from "cors"
 import 'dotenv/config'
 import cookieParser from "cookie-parser"
 import conn from "./config/mongodb.js"
+import authRouter from "./route/authRouter.js"
 
 const app = express()
 const port = process.env.port || 4000
 
 conn
 
+
 app.use(express())
 app.use(cookieParser())
 app.use(cors({credentials: true}))
+
+// API
 app.get('/', (req,res)=> res.send("API is Working."))
+app.use("/api/auth", authRouter)
+
 app.listen(port, ()=> console.log(`Server started on PORT:${port}`))
