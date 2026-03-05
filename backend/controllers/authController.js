@@ -1,6 +1,7 @@
-import userModel from "../models/userModels.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import userModel from "../models/userModel.js"
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import transporter from "../config/nodemailer.js";
 
 // ฟังก์ชันสำหรับการลงทะเบียนผู้ใช้ใหม่ โดยรับข้อมูลจากคำขอ (request) และส่งผลลัพธ์กลับไปยังผู้ใช้ (response)
 export const register = async (req, res) => {
@@ -42,11 +43,21 @@ export const register = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 วัน
         });
 
-        res.json({
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: 'ยินดีต้อนรับสู่เว็บไซต์ของเรา',
+            text: `บัญชีของคุณได้ถูกสร้างขึ้นด้วยอีเมล: ${email}`
+        }
+        //คำสั่งการส่งอีเมล รอจนกว่าจะสำเร็จ
+        await transporter.sendMail(mailOptions) 
+        
+        return res.json({success: true})
+
+        return res.json({
             success: true,
-            message: "สมัครสมาชิกสำเร็จ",
-            user: {name: newUser.name, 
-                email: newUser.email}
+            message: "ลงทะเบียนสำเร็จ",
+            user: {name: newUser.name, email: newUser.email}
         });
     } catch (error) {
         // หากเกิดข้อผิดพลาดในกระบวนการลงทะเบียน จะส่งผลลัพธ์เป็น JSON ที่มีสถานะความสำเร็จเป็น false และข้อความแจ้งเตือนข้อผิดพลาด

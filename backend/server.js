@@ -6,12 +6,12 @@ import conn from "./config/mongodb.js"
 import authRouter from "./route/authRouter.js"
 
 const app = express()
-const port = process.env.port || 4000
+const port = process.env.PORT || 4000
 
-conn
+conn()
 
 
-app.use(express())
+app.use(express.json())
 app.use(cookieParser())
 app.use(cors({credentials: true}))
 
