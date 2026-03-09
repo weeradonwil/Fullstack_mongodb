@@ -1,16 +1,40 @@
-import { useContext } from "react";
-//เราใช้ useContext ใน  react เพื่อส่งข้อมูลกันระหว่าง components เช่น หากมีข้อมูลอยู่ที่ component แม่ แล้ว component ลูกๆอยากใช้ข้อมูลนั้นๆ
-//เราสามารถส่งข้อมูลไปยัง component ลูกๆได้ผ่าน useContext
+import { createContext, useState } from "react";
 
-export const AppContext = createContext()
+// สร้าง Context สำหรับใช้แชร์ข้อมูลระหว่าง components
+// เช่น login status, user data หรือ backend URL
+export const AppContext = createContext();
 
-const value = {
-}
 
-export const AppContextPravider = (props) => {
+// สร้าง Provider component
+// Provider จะทำหน้าที่ครอบ component อื่น ๆ
+// เพื่อให้ component ลูกสามารถเข้าถึงข้อมูลใน context ได้
+export const AppContextProvider = (props) => {
+
+    // ดึง URL ของ backend จากไฟล์ .env
+    // เช่น http://localhost:4000
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    // state สำหรับตรวจสอบว่าผู้ใช้ login อยู่หรือไม่
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // state สำหรับเก็บข้อมูลผู้ใช้ เช่น name email profile
+    const [userData, setUserData] = useState(null);
+
+
+    // object ที่จะส่งไปให้ทุก component ผ่าน Context
+    const value = {
+        backendUrl,
+        isLoggedIn,
+        setIsLoggedIn,
+        userData,
+        setUserData
+    };
+
+    // Provider ใช้ครอบ components ทั้งหมด
+    // เพื่อให้ component ลูกสามารถใช้ข้อมูลจาก Context ได้
     return (
-        <AppContext.Pravider value={value}> 
-        {props.children}
-        </AppContext.Pravider>
-    )
-}
+        <AppContext.Provider value={value}>
+            {props.children}
+        </AppContext.Provider>
+    );
+};
