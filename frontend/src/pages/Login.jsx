@@ -34,10 +34,12 @@ const Login = () => {
           <button type='button' onClick={() => setState(state === 'Sign Up' ? 'Login' : 'Sign Up')}
             className='mb-4 text-sm text-gray-400 hover:text-gray-200'>{state === 'Sign Up' ? 'มีบัญชีแล้ว?' : 'ยังไม่มีบัญชี? สมัครสมาชิก'}</button>
 
-          
+          <button className='w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2.5 rounded-full hover:from-blue-600 hover:to-purple-600 mb-4'>
+            {state === 'Sign Up' ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}
+          </button>
+
         </form>
 
-        <button onClick={() => setState(state === 'Sign Up' ? 'Login' : 'Sign Up')}>คลิกเพื่อ {state === 'Sign Up' ? 'Login' : 'Sign Up'}</button>
       </div>
     </div>
   )
