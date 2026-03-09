@@ -4,6 +4,9 @@ import 'dotenv/config'
 import cookieParser from "cookie-parser"
 import conn from "./config/mongodb.js"
 import authRouter from "./route/authRouter.js"
+import dns from 'dns/promises';
+
+dns.setServers(['8.8.8.8','1.1.1.1']);
 
 const app = express()
 const port = process.env.PORT || 4000
