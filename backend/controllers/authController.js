@@ -130,3 +130,29 @@ export const logout = (req, res) => {
         return res.json({success: false, message: error.message});
     }
 }
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await userModel
+      .findById(req.userId)
+      .select('-password')
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "ไม่พบข้อมูลผู้ใช้"
+      })
+    }
+
+    return res.json({
+      success: true,
+      user
+    })
+
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message
+    })
+  }
+}

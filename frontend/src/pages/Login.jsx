@@ -1,14 +1,72 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AppContext } from '../context/AppContext'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const Login = () => {
 
   const navigate = useNavigate()
+  const [backendUrl, setIsLoggedIn, getUserData] = userContext().AppContext()
 
   const [state, setState] = useState('Sign Up')
   const [name, setName] = useState('') //สร้าง state สำหรับเก็บค่า ชื่อ email รหัสผ่าน
   const [email, setEmail] = useState('')
   const [password, , setPassword] = useState('')
+  const [IsSubmitting, setIsSubmitting] = useState(false)
+
+const onSubmitHandler = async (e) => {
+  e.preventDefault()
+
+  try {
+    setIsSubmitting(true)
+    axios.defaults.withCredentials = true
+
+    if (state === "Sign Up") {
+
+      const { data } = await axios.post(`${backendUrl}/api/auth/register`, {
+        name,
+        email,
+        password
+      })
+
+      if (data.success) {
+        toast.success("สมัครสมาชิกสำเร็จ")
+        setIsLoggedIn(true)
+        await getUserData()
+        navigate("/member")
+      }
+
+    } else {
+
+      const { data } = await axios.post(`${backendUrl}/api/auth/login`, {
+        email,
+        password
+      })
+
+      if (data.success) {
+        toast.success("เข้าสู่ระบบสำเร็จ")
+        setIsLoggedIn(true)
+        await getUserData()
+        navigate("/member")
+      }
+
+    }
+
+  } catch (error) {
+
+    toast.error(
+      error.response?.data?.message ||
+      error.message ||
+      "เกิดปัญหาในการเชื่อมต่อกับ server"
+    )
+
+  } finally {
+    setIsSubmitting(false)
+  }
+}
+
+
 
   return (
     <div className='flex items-center justify-center min-h-screen px-6 bg-gradient-to-br from-blue-200 to-purple-400'>
