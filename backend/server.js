@@ -3,7 +3,7 @@ import cors from "cors"
 import 'dotenv/config'
 import cookieParser from "cookie-parser"
 import conn from "./config/mongodb.js"
-import authRouter from "./route/authRouter.js"
+import authRoutes from "./route/authRoutes.js"
 import dns from 'dns/promises';
 
 dns.setServers(['8.8.8.8','1.1.1.1']);
@@ -20,6 +20,6 @@ app.use(cors({credentials: true}))
 
 // API
 app.get('/', (req,res)=> res.send("API is Working."))
-app.use("/api/auth", authRouter)
+app.use("/api/auth", authRoutes)
 
 app.listen(port, ()=> console.log(`Server started on PORT:${port}`))
