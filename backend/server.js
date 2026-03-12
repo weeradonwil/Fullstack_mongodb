@@ -3,7 +3,8 @@ import cors from "cors"
 import 'dotenv/config'
 import cookieParser from "cookie-parser"
 import conn from "./config/mongodb.js"
-import authRoutes from "./route/authRoutes.js"
+import authRoutes from "./routes/authRoutes.js";
+
 import dns from 'dns/promises';
 
 dns.setServers(['8.8.8.8','1.1.1.1']);

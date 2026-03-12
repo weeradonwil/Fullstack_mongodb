@@ -1,13 +1,23 @@
-import express from "express"
-import { register, login, logout } from "../controllers/authController.js";
-import userAuth from '../middleware/userAuth'
+import express from "express";
+import { register, sendEmail, verifyEmail, login, logout, getMe } from "../controllers/authController.js";
+import userAuth from "../middleware/authMiddleware.js";
 
-const authRouter = express.Router();
+const router = express.Router();
 
-// กำหนดเส้นทางสำหรับการลงทะเบียนผู้ใช้ โดยใช้ HTTP POST method และเรียกใช้ฟังก์ชัน register จาก authController
-authRouter.post("/register", register);
-authRouter.post("/login", login);
-authRouter.post("/logout", logout);
-authRouter.post("/member", userAuth, getMe);
+router.post("/register", register);
 
-export default authRouter;
+router.get("/verify-email", verifyEmail);
+
+router.get("/test-email", async (req, res) => {
+  const { email } = req.query;
+
+  await sendEmail(email);
+
+  res.send("Email sent");
+});
+
+router.post("/login", login);
+router.post("/logout", logout);
+router.get("/member", userAuth, getMe);
+
+export default router;

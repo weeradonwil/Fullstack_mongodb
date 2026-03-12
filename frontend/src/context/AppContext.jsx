@@ -1,54 +1,82 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-// สร้าง Context สำหรับใช้แชร์ข้อมูลระหว่าง components
-// เช่น login status, user data หรือ backend URL
-export const AppContent = createContext();
+export const AppContext = createContext();
 
+const AppContextProvider = ({ children }) => {
 
-// สร้าง Provider component
-// Provider จะทำหน้าที่ครอบ component อื่น ๆ
-// เพื่อให้ component ลูกสามารถเข้าถึงข้อมูลใน context ได้
-export const AppContextProvider = ( {children}) => {
+    const BackendUrl = "http://localhost:5000";
 
-    // ดึง URL ของ backend จากไฟล์ .env
-    // เช่น http://localhost:4000
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-    // state สำหรับตรวจสอบว่าผู้ใช้ login อยู่หรือไม่
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    // state สำหรับเก็บข้อมูลผู้ใช้ เช่น name email profile
     const [userData, setUserData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    axios.defaults.withCredentials = true;
 
     const getUserData = async () => {
         try {
-            axios.get(${backendUrl}/api/user/data)
 
-            if(data.success) {
-                setUserData(data.userData)
-            } else {
-                toast.error{data.message || 'ไม่สามารดึงข้อมูลผู้ใช้ได้'}
+            const { data } = await axios.get(`${BackendUrl}/api/auth/member`);
+
+            if (data.success) {
+                setIsLoggedIn(true);
+                setUserData(data.user);
             }
-        } catch(error) {
-            toast.error(error.response?.data?.message || error.message || 'เกิดข้อมูลผิดพลาดในการดึงข้อมูลผู้ใช้')
+
+        } catch (error) {
+
+            setIsLoggedIn(false);
+            setUserData(null);
+
+        } finally {
+
+            setIsLoading(false);
+
         }
-    }
+    };
 
+    const logout = async () => {
+        try {
 
-    // object ที่จะส่งไปให้ทุก component ผ่าน Context
+            const { data } = await axios.get(`${BackendUrl}/api/auth/logout`);
+
+            if (data.success) {
+                setIsLoggedIn(false);
+                setUserData(null);
+                toast.success("ออกจากระบบสำเร็จ");
+            } else {
+                toast.error(data.message || "ผิดพลาดในการออกจากระบบ");
+            }
+
+        } catch (error) {
+
+            toast.error("Logout failed");
+
+        }
+    };
+
+    useEffect(() => {
+        getUserData();
+    }, []);
+
     const value = {
-        backendUrl,
+        BackendUrl,
         isLoggedIn,
         setIsLoggedIn,
         userData,
-        setUserData
+        setUserData,
+        getUserData,
+        logout,
+        isLoading
     };
 
-    // Provider ใช้ครอบ components ทั้งหมด
-    // เพื่อให้ component ลูกสามารถใช้ข้อมูลจาก Context ได้
     return (
         <AppContext.Provider value={value}>
-            {props.children}
+            {children}
         </AppContext.Provider>
     );
+
 };
+
+export default AppContextProvider;
