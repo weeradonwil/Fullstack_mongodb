@@ -34,11 +34,10 @@ const Member = () => {
     return (
         <div>
             <h1>Member Page</h1>
-            <p>{userData?.name}</p>
+            <p>สวัสดี {userData?.name || "User"}</p>
+            <p>{userData?.email || ""}</p>
 
-            <button onClick={handleLogout}>
-                Logout
-            </button>
+            <button onClick={handleLogout}> ออกจากระบบ </button>
         </div>
     )
 }

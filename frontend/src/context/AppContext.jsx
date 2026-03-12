@@ -2,13 +2,13 @@ import { createContext, useState } from "react";
 
 // สร้าง Context สำหรับใช้แชร์ข้อมูลระหว่าง components
 // เช่น login status, user data หรือ backend URL
-export const AppContext = createContext();
+export const AppContent = createContext();
 
 
 // สร้าง Provider component
 // Provider จะทำหน้าที่ครอบ component อื่น ๆ
 // เพื่อให้ component ลูกสามารถเข้าถึงข้อมูลใน context ได้
-export const AppContextProvider = (props) => {
+export const AppContextProvider = ( {children}) => {
 
     // ดึง URL ของ backend จากไฟล์ .env
     // เช่น http://localhost:4000
@@ -19,6 +19,20 @@ export const AppContextProvider = (props) => {
 
     // state สำหรับเก็บข้อมูลผู้ใช้ เช่น name email profile
     const [userData, setUserData] = useState(null);
+
+    const getUserData = async () => {
+        try {
+            axios.get(${backendUrl}/api/user/data)
+
+            if(data.success) {
+                setUserData(data.userData)
+            } else {
+                toast.error{data.message || 'ไม่สามารดึงข้อมูลผู้ใช้ได้'}
+            }
+        } catch(error) {
+            toast.error(error.response?.data?.message || error.message || 'เกิดข้อมูลผิดพลาดในการดึงข้อมูลผู้ใช้')
+        }
+    }
 
 
     // object ที่จะส่งไปให้ทุก component ผ่าน Context
